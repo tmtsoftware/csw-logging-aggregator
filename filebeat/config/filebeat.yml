@@ -1,0 +1,13 @@
+filebeat:
+    prospectors:
+        - 
+            type: log
+            enabled: true
+            paths:
+                - 
+                    /usr/share/filebeat/redis_sentinel.log
+                    #/tmp/csw/logs/*.log
+
+output:
+    logstash:
+        hosts: ["logstash:5044"]
