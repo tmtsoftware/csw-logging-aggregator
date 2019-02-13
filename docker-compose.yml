@@ -55,8 +55,8 @@ services:
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
+      - /tmp/csw/logs/:/usr/share/filebeat/watch:ro
       - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /tmp/csw/logs/:/usr/share/filebeat/
     networks:
       - elk
     depends_on:
@@ -74,8 +74,6 @@ services:
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
     network_mode: host # Mandatory to monitor HOST filesystem, memory, processes,...
-#    networks:
-#      - elk
     depends_on:
       - elasticsearch
 networks:

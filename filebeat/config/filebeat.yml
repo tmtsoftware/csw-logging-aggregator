@@ -5,7 +5,7 @@ filebeat:
             enabled: true
             paths:
                 - 
-                    /usr/share/filebeat/redis_sentinel.log
+                    /watch/*.log
                     #/tmp/csw/logs/*.log
 
 output:
