@@ -15,11 +15,6 @@ Based on the official Docker images from Elastic:
 * [logstash](https://github.com/elastic/logstash-docker)
 * [kibana](https://github.com/elastic/kibana-docker)
 
-**Note**: Other branches in this project are available:
-
-* [`x-pack`](https://github.com/deviantony/docker-elk/tree/x-pack): X-Pack support
-* [`searchguard`](https://github.com/deviantony/docker-elk/tree/searchguard): Search Guard support
-* [`vagrant`](https://github.com/deviantony/docker-elk/tree/vagrant): run Docker inside Vagrant
 
 ## Contents
 
@@ -39,14 +34,11 @@ Based on the official Docker images from Elastic:
    * [How can I persist Elasticsearch data?](#how-can-i-persist-elasticsearch-data)
 5. [Extensibility](#extensibility)
    * [How can I add plugins?](#how-can-i-add-plugins)
-   * [How can I enable the provided extensions?](#how-can-i-enable-the-provided-extensions)
 6. [JVM tuning](#jvm-tuning)
    * [How can I specify the amount of memory used by a service?](#how-can-i-specify-the-amount-of-memory-used-by-a-service)
-   * [How can I enable a remote JMX connection to a service?](#how-can-i-enable-a-remote-jmx-connection-to-a-service)
 7. [Going further](#going-further)
    * [Using a newer stack version](#using-a-newer-stack-version)
    * [Plugins and integrations](#plugins-and-integrations)
-   * [Docker Swarm](#docker-swarm)
 
 ## Requirements
 
@@ -88,22 +80,13 @@ Give Kibana a few seconds to initialize, then access the Kibana web UI by hittin
 [http://localhost:5601](http://localhost:5601) with a web browser.
 
 By default, the stack exposes the following ports:
-* 5000: Logstash TCP input.
+* 5044: Logstash TCP input.
 * 9200: Elasticsearch HTTP
-* 9300: Elasticsearch TCP transport
+* 9300: Elasticsearch TCP transport(Internal)
 * 5601: Kibana
 
-**WARNING**: If you're using `boot2docker`, you must access it via the `boot2docker` IP address instead of `localhost`.
+Filebeat monitors the log file which can be indexed and visualized through Kibana.
 
-**WARNING**: If you're using *Docker Toolbox*, you must access it via the `docker-machine` IP address instead of
-`localhost`.
-
-Now that the stack is running, you will want to inject some log entries. The shipped Logstash configuration allows you
-to send content via TCP:
-
-```console
-$ nc localhost 5000 < /path/to/logfile.log
-```
 
 ## Initial setup
 
@@ -209,14 +192,6 @@ To add plugins to any ELK component you have to:
 2. Add the associated plugin code configuration to the service configuration (eg. Logstash input/output)
 3. Rebuild the images using the `docker-compose build` command
 
-### How can I enable the provided extensions?
-
-A few extensions are available inside the [`extensions`](extensions) directory. These extensions provide features which
-are not part of the standard Elastic stack, but can be used to enrich it with extra integrations.
-
-The documentation for these extensions is provided inside each individual subdirectory, on a per-extension basis. Some
-of them require manual changes to the default ELK configuration.
-
 ## JVM tuning
 
 ### How can I specify the amount of memory used by a service?
@@ -246,22 +221,6 @@ logstash:
     LS_JAVA_OPTS: "-Xmx1g -Xms1g"
 ```
 
-### How can I enable a remote JMX connection to a service?
-
-As for the Java Heap memory (see above), you can specify JVM options to enable JMX and map the JMX port on the Docker
-host.
-
-Update the `{ES,LS}_JAVA_OPTS` environment variable with the following content (I've mapped the JMX service on the port
-18080, you can change that). Do not forget to update the `-Djava.rmi.server.hostname` option with the IP address of your
-Docker host (replace **DOCKER_HOST_IP**):
-
-```yml
-logstash:
-
-  environment:
-    LS_JAVA_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=18080 -Dcom.sun.management.jmxremote.rmi.port=18080 -Djava.rmi.server.hostname=DOCKER_HOST_IP -Dcom.sun.management.jmxremote.local.only=false"
-```
-
 ## Going further
 
 ### Using a newer stack version
@@ -283,21 +242,3 @@ See the following Wiki pages:
 
 * [External applications](https://github.com/deviantony/docker-elk/wiki/External-applications)
 * [Popular integrations](https://github.com/deviantony/docker-elk/wiki/Popular-integrations)
-
-### Docker Swarm
-
-Experimental support for Docker Swarm is provided in the form of a `docker-stack.yml` file, which can be deployed in an
-existing Swarm cluster using the following command:
-
-```console
-$ docker stack deploy -c docker-stack.yml elk
-```
-
-If all components get deployed without any error, the following command will show 3 running services:
-
-```console
-$ docker stack services elk
-```
-
-**NOTE:** to scale Elasticsearch in Swarm mode, configure *zen* to use the DNS name `tasks.elasticsearch` instead of
-`elasticsearch`.
