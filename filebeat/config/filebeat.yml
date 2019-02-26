@@ -5,8 +5,9 @@ filebeat:
             enabled: true
             paths:
                 - 
-                    /watch/*.log
-                    #/tmp/csw/logs/*.log
+                    /usr/share/filebeat/watch/*.log
+                -
+                    /usr/share/filebeat/watch/*/*.log
 
 output:
     logstash:
