@@ -10,5 +10,6 @@ filebeat:
                     /usr/share/filebeat/watch/*/*.log
 
 output:
-    logstash:
-        hosts: ["logstash:5044"]
+    elasticsearch:
+        hosts: ["elasticsearch:9200"]
+        pipeline: "test-pipeline"
