@@ -55,7 +55,6 @@ services:
     volumes:
       - /tmp/tmt/logs/:/usr/share/filebeat/watch:ro
       - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    command: ['/bin/bash', '/usr/share/elasticsearch/config/docker-entrypoint.sh', 'filebeat']
     networks:
       - elk
     depends_on:

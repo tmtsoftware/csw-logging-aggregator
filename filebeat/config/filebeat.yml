@@ -1,15 +1,11 @@
 filebeat:
-    prospectors:
-        - 
-            type: log
-            enabled: true
-            paths:
-                - 
-                    /usr/share/filebeat/watch/*.log
-                -
-                    /usr/share/filebeat/watch/*/*.log
-
+  prospectors:
+    - type: log
+      enabled: true
+      paths:
+        - /usr/share/filebeat/watch/*.log
+        - /usr/share/filebeat/watch/*/*.log
 output:
-    elasticsearch:
-        hosts: ["elasticsearch:9200"]
-        pipeline: "test-pipeline"
+  elasticsearch:
+    hosts: ["elasticsearch:9200"]
+    pipeline: "test-pipeline"
