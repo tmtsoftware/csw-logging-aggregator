@@ -1,11 +1,30 @@
 filebeat:
-  prospectors:
+  inputs:
     - type: log
       enabled: true
       paths:
         - /usr/share/filebeat/watch/*.log
         - /usr/share/filebeat/watch/*/*.log
+      fields_under_root: true
+      fields:
+        json: true
+  modules:
+    - module: system
+      syslog:
+        var.paths: ["/var/log/host/system.log*"]
+        var.convert_timezone: true #This adds timezone info to the ingest pipeline
+      auth:
+        var.convert_timezone: true
+    - module: postgresql
+      log:
+          enabled: true
+          var.paths: ["/usr/share/filebeat/postgres/*.log*"]
+          processors:
+            - add_locale: ~
 output:
-  elasticsearch:
-    hosts: ["elasticsearch:9200"]
-    pipeline: "test-pipeline"
+  logstash:
+    hosts: ["logstash:5044"]
+setup.kibana:
+  host: "kibana:5601"
+setup.dashboards.enabled: true
+setup.dashboards.retry.enabled: true
