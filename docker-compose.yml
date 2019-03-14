@@ -19,22 +19,22 @@ services:
     networks:
       - elk
 
-  pipeline-setup:
-    build:
-      context: filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    restart: on-failure
-    entrypoint: ["/var/lib/tools/configure.sh"]
-    depends_on:
-      - "elasticsearch"
-    volumes:
-      - type: bind
-        source: ./elasticsearch
-        target: /var/lib/tools
-      - ./filebeat/config/filebeat-init.yml:/usr/share/filebeat/filebeat-init.yml:ro      
-    networks:
-      - elk
+  # pipeline-setup:
+  #   build:
+  #     context: filebeat/
+  #     args:
+  #       ELK_VERSION: $ELK_VERSION
+  #   restart: on-failure
+  #   entrypoint: ["/var/lib/tools/configure.sh"]
+  #   depends_on:
+  #     - "elasticsearch"
+  #   volumes:
+  #     - type: bind
+  #       source: ./elasticsearch
+  #       target: /var/lib/tools
+  #     - ./filebeat/config/filebeat-init.yml:/usr/share/filebeat/filebeat-init.yml:ro      
+  #   networks:
+  #     - elk
 
   kibana:
     build:
@@ -56,15 +56,19 @@ services:
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
-      - /tmp/tmt/logs/:/usr/share/filebeat/watch:ro
-      - /private/var/log/:/var/log/host/:ro
+      # - /tmp/tmt/logs/:/usr/share/filebeat/watch:ro
+      - /tmp/csw/logs/:/usr/share/filebeat/watch:ro
+      # - /tmp/csw/logs/csw-config-server:/usr/share/filebeat/watch:ro
+      # - /tmp/csw/logs/csw-location-agent:/usr/share/filebeat/watch:ro
+      # - /tmp/csw/logs/csw-location-server:/usr/share/filebeat/watch:ro
+      # - /private/var/log/:/var/log/host/:ro
       - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /usr/local/var/postgres/log/:/usr/share/filebeat/postgres/
+      # - /usr/local/var/postgres/log/:/usr/share/filebeat/postgres/
       - ${ETC_LOCALTIME}:/etc/localtime:ro
     networks:
       - elk
     depends_on:
-      - pipeline-setup
+      # - pipeline-setup
       - logstash
 
 

@@ -10,6 +10,8 @@ filebeat:
           enabled: true
           processors:
             - add_locale: ~
+    - module: redis
+
 output:
   elasticsearch:
     hosts: ["elasticsearch:9200"]

@@ -8,23 +8,25 @@ filebeat:
       fields_under_root: true
       fields:
         json: true
-  modules:
-    - module: system
-      syslog:
-        var.paths: ["/var/log/host/system.log*"]
-        var.convert_timezone: true #This adds timezone info to the ingest pipeline
-      auth:
-        var.convert_timezone: true
-    - module: postgresql
-      log:
-          enabled: true
-          var.paths: ["/usr/share/filebeat/postgres/*.log*"]
-          processors:
-            - add_locale: ~
+      exclude_files: ["AAS.log"]
+  # modules:
+  #   - module: system
+  #     syslog:
+  #       var.paths: ["/var/log/host/system.log*"]
+  #       var.convert_timezone: true #This adds timezone info to the ingest pipeline
+  #     auth:
+  #       var.convert_timezone: true
+  #   - module: postgresql
+  #     log:
+  #         enabled: true
+  #         var.paths: ["/usr/share/filebeat/postgres/*.log*"]
+  #         processors:
+  #           - add_locale: ~
+  #   - module: redis
 output:
   logstash:
     hosts: ["logstash:5044"]
 setup.kibana:
   host: "kibana:5601"
-setup.dashboards.enabled: true
-setup.dashboards.retry.enabled: true
+# setup.dashboards.enabled: true
+# setup.dashboards.retry.enabled: true
