@@ -129,7 +129,7 @@ It is also possible to map the entire `config` directory instead of a single fil
 
 ### How can I tune the Logstash configuration?
 
-The Logstash configuration is stored in `logstash/config/logstash.yml`.
+The Logstash configuration is stored in `logstash/config/logstash.yml`. For example, you can specify pipeline settings, the location of configuration files, logging options, and other settings. However, for our purpose we do not need to modify this file. Another file stored in `logstash/pipeline/logstash.conf` is required to handle the logstash event pipeline based on configuration. The Logstash event processing pipeline has three stages: inputs → filters → outputs. Inputs generate events, filters modify them, and outputs ship them elsewhere.
 
 It is also possible to map the entire `config` directory instead of a single file, however you must be aware that
 Logstash will be expecting a
