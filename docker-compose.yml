@@ -9,8 +9,6 @@ services:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      # - /private/etc/timezone:/etc/timezone:ro
-      - ${ETC_LOCALTIME}:/etc/localtime:ro
     ports:
       - $ES_TCP_PORT:$ES_TCP_PORT
       - $ES_INTERNAL_PORT:$ES_INTERNAL_PORT
@@ -18,23 +16,6 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - elk
-
-  # pipeline-setup:
-  #   build:
-  #     context: filebeat/
-  #     args:
-  #       ELK_VERSION: $ELK_VERSION
-  #   restart: on-failure
-  #   entrypoint: ["/var/lib/tools/configure.sh"]
-  #   depends_on:
-  #     - "elasticsearch"
-  #   volumes:
-  #     - type: bind
-  #       source: ./elasticsearch
-  #       target: /var/lib/tools
-  #     - ./filebeat/config/filebeat-init.yml:/usr/share/filebeat/filebeat-init.yml:ro      
-  #   networks:
-  #     - elk
 
   kibana:
     build:
@@ -49,28 +30,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-  filebeat:
-    build:
-      context: filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    volumes:
-      # - /tmp/tmt/logs/:/usr/share/filebeat/watch:ro
-      - /tmp/csw/logs/:/usr/share/filebeat/watch:ro
-      # - /tmp/csw/logs/csw-config-server:/usr/share/filebeat/watch:ro
-      # - /tmp/csw/logs/csw-location-agent:/usr/share/filebeat/watch:ro
-      # - /tmp/csw/logs/csw-location-server:/usr/share/filebeat/watch:ro
-      # - /private/var/log/:/var/log/host/:ro
-      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      # - /usr/local/var/postgres/log/:/usr/share/filebeat/postgres/
-      - ${ETC_LOCALTIME}:/etc/localtime:ro
-    networks:
-      - elk
-    depends_on:
-      # - pipeline-setup
-      - logstash
-
 
   logstash:
    build:
@@ -90,20 +49,19 @@ services:
    depends_on:
      - elasticsearch
 
-#  metricbeat:
-#    build:
-#      context: metricbeat/
-#      args:
-#        ELK_VERSION: $ELK_VERSION
-#    volumes:
-#      - ./metricbeat/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
-#      - /proc:/hostfs/proc:ro
-#      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
-#      - /:/hostfs:ro
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    network_mode: host # Mandatory to monitor HOST filesystem, memory, processes,...
-#    depends_on:
-#      - elasticsearch
+  filebeat:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - /tmp/csw/logs/:/usr/share/filebeat/watch:ro
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
 networks:
 
   elk:
